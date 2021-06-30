@@ -98,7 +98,7 @@
               "Incorrecta movilización del paciente en el ámbito intrahospitalario" :inner-hospital]
     :insertion ->Context}])
 
-(defrecord Treatment [medicine description])
+(defrecord Treatment [medicine description diagnostic])
 
 (def scale [#{"Paracetamol" "ibuprofeno" "ketorolac" "diclofenac"}
             #{"Dexametasona" "diazepam" "carbamazepina" "amitriptilina" "pregabalina" "gabapentina"}
@@ -152,7 +152,8 @@ donde se requiere acción inmediata.
 Para establecer el diagnóstico definitivo se solicita un electrocardiograma
 y muestras de laboratorio para marcadores cardiacos.
 Durante la cateterización endovenosa se extrae sangre y
-luego se continúa administrando tratamiento analgésico por esta vía.")))
+luego se continúa administrando tratamiento analgésico por esta vía."
+            "Síndrome coronario agudo")))
 
 (defrule humerus-fracture-1
   [Location (= location :arm)]
@@ -165,7 +166,8 @@ luego se continúa administrando tratamiento analgésico por esta vía.")))
 Si la fractura se encuentra a niveles superiores,
 el compromiso vasculonervioso es mayor,
 por las relaciones anatómicas del húmero.
-Por eso se precisa realizar diagnóstico por imagen e inmovilización de la región afectada.")))
+Por eso se precisa realizar diagnóstico por imagen e inmovilización de la región afectada."
+            "Fractura de húmero 1")))
 
 (defrule humerus-fracture-2
   [Location (= location :arm)]
@@ -180,7 +182,8 @@ el compromiso vasculonervioso es mayor,
 por las relaciones anatómicas del húmero.
 Por eso se precisa realizar diagnóstico
 por imagen e inmovilización de la región afectada.
-")))
+"
+            "Fractura de húmero 2")))
 
 (defrule femur-hip-fracture
   [Location (= location :hip)]
@@ -195,7 +198,8 @@ Debido a las relaciones anatómicas es imprescindible la inmovilización de la r
 La inmovilización implica que el paciente se encuentra acostado con las barandas elevadas por seguridad;
  debido a las necesidades de eliminación de excretas, se debe garantizar el confort del paciente en cuanto a la higiene en cama,
  así como prevenir úlceras por presión proporcionando rotaciones (cambio de posición).
-")))
+"
+            "Fractura de fémur / cadera")))
 
 (defrule lumbalgia-1
   [Location (= location :lumbar-area)]
@@ -210,7 +214,8 @@ No hay indicación de reposo estricto, sin embargo el paciente es quien establec
  según el umbral de tolerancia de dolor que maneje; es por eso que se deben garantizar medidas de confort y seguridad.
 Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación
 y estructuras involucradas.
-")))
+"
+            "Lumbalgia 1")))
 
 (defrule lumbalgia-2
   [Location   (= location :lumbar-area)]
@@ -225,7 +230,8 @@ y estructuras involucradas.
 No hay indicación de reposo estricto, sin embargo el paciente es quien establecerá los límites
  de su movilización según el umbral de tolerancia de dolor que maneje; es por eso que
 se deben garantizar medidas de confort y seguridad. Se realiza diagnóstico por imagen
-(resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas.")))
+(resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Lumbalgia 2")))
 
 (defrule cervicalgia-c1-c4
   "Cervicalgia: niveles medulares cervicales superiores (C1 - C4)"
@@ -239,7 +245,8 @@ se deben garantizar medidas de confort y seguridad. Se realiza diagnóstico por 
             "Se debe garantizar la seguridad y confort del paciente: barandas superiores elevadas,
 cabecera a 30º, almohadas, posición de cuello y cabeza, rotación.
 Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía)
-para conocer la magnitud de afectación y estructuras involucradas.")))
+para conocer la magnitud de afectación y estructuras involucradas."
+            "Cervicalgia: niveles medulares cervicales superiores (C1 - C4)")))
 
 (defrule suspected-cerivical-fracture-1
   "Sospecha de fractura de vértebra cervical 1"
@@ -253,7 +260,8 @@ para conocer la magnitud de afectación y estructuras involucradas.")))
             "Una alteración a este nivel puede comprometer toda la médula espinal,
  por lo que es fundamental y prioritaria la inmovilización del cuello (collar cervical).
  Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía)
-para conocer la magnitud de afectación y estructuras involucradas.")))
+para conocer la magnitud de afectación y estructuras involucradas."
+            "Sospecha de fractura de vértebra cervical 1")))
 
 (defrule suspected-cervical-fracture-2
   "Sospecha de fractura de vértebra cervical 2"
@@ -266,7 +274,8 @@ para conocer la magnitud de afectación y estructuras involucradas.")))
             (treatments 2)
             "Una alteración a este nivel puede comprometer toda la médula espinal,
 por lo que es fundamental y prioritaria la inmovilización del cuello (collar cervical).
-Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas.")))
+Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Sospecha de fractura de vértebra cervical 2")))
 
 (defrule cervicalgia-c5-c8-1
   [Intensity (= intensity :low)]
@@ -278,7 +287,8 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
             (treatments 4)
             "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores,
  el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente.
- Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas.")))
+ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 1")))
 
 (defrule cervicalgia-c5-c8-2
   [Intensity (= intensity :moderate)]
@@ -291,7 +301,8 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
             "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores,
 el paciente será más o menos dependiente de los cuidados de enfermería.
 Se garantiza el confort y seguridad del paciente.
-Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas.")))
+Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 2")))
 
 (defrule recent-cefalea-1
   [Intensity (= intensity :low)]
@@ -303,7 +314,8 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
             "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia,
  que se asocia con otro síntoma motor en el momento de la valoración del dolor,
  o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen
-(resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV).")))
+(resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
+            "Cefalea de reciente aparición 1")))
 
 (defrule recent-cefalea-2
   [Intensity (= intensity :moderate)]
@@ -314,7 +326,8 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
             (treatments 4)
             "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia,
  que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después,
- condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV).")))
+ condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
+            "Cefalea de reciente aparición 2")))
 
 (defrule study-cefalea-1
   [Intensity (= intensity :moderate)]
@@ -325,7 +338,8 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
             (treatments 5)
             "Este tipo de dolor crónico se define como incapacitante por lo que es necesario encontrar lo que lo provoque.
 Durante el tiempo que tome la realización de estudios diagnósticos por imágenes
-y laboratorio se establecerá un tratamiento para el dolor.")))
+y laboratorio se establecerá un tratamiento para el dolor."
+            "Cefalea en estudio 1")))
 
 (defrule study-cefalea-2
   [Intensity (= intensity :high)]
@@ -337,7 +351,8 @@ y laboratorio se establecerá un tratamiento para el dolor.")))
             "Este tipo de dolor crónico se define como incapacitante por
 lo que es necesario encontrar lo que lo provoque.
 Durante el tiempo que tome la realización de estudios
- diagnósticos por imágenes y laboratorio se establecerá un tratamiento para el dolor.")))
+ diagnósticos por imágenes y laboratorio se establecerá un tratamiento para el dolor."
+            "Cefalea en estudio 2")))
 
 (defrule postoperation-inmediate-admision
   [Context (= context :non-ambulatory-surgery)]
@@ -346,7 +361,8 @@ Durante el tiempo que tome la realización de estudios
             (treatments 2)
             "Un procedimiento quirúrgico implica la pérdida de integridad de estructuras anatómicas,
  tales como piel, órganos y/o músculos. En cualquier paciente que transita un postoperatorio
- inmediato se asume la presencia de dolor y la necesidad de aplicar tratamiento analgesico.")))
+ inmediato se asume la presencia de dolor y la necesidad de aplicar tratamiento analgesico."
+            "Postoperatorios inmediatos con internación")))
 
 (defrule apendicitis
   [Location (= location :right-inferior-abdomen-cuadrant)]
@@ -356,7 +372,8 @@ Durante el tiempo que tome la realización de estudios
             (treatments 3)
             "El dolor es localizado y aumenta a la palpación profunda del punto doloroso de McBurney,
  lo cual orienta a la resolución quirúrgica y se solicitan estudios complementarios de rutina
- para darle solidez a la terapéutica. Luego de esta valoración (palpación) comienza el tratamiento para el dolor.")))
+ para darle solidez a la terapéutica. Luego de esta valoración (palpación) comienza el tratamiento para el dolor."
+            "Apendicitis")))
 
 (defrule colecistitis
   [Location (= location :right-superior-abdomen-cuadrant)]
@@ -367,7 +384,8 @@ Durante el tiempo que tome la realización de estudios
             "El dolor es localizado y aumenta a la palpación profunda en el punto doloroso cístico.
  Debido a las complejas relaciones anatómicas en esa región esta palpación no basta para dar diagnóstico
  por lo que se requieren estudios complementarios de laboratorio y diagnóstico por imágenes (ecografía).
-Durante la realización de estudios comienza el tratamiento analgesico.")))
+Durante la realización de estudios comienza el tratamiento analgesico."
+            "Colecistitis")))
 
 (defrule pericarditis
   "Pericarditis / taponamiento cardiaco"
@@ -382,7 +400,8 @@ Durante la realización de estudios comienza el tratamiento analgesico.")))
  que hablan de la disminución del oxígeno al miocardio, pero que la resolución es muy distinta.
  El taponamiento cardiaco, que es posterior a la pericarditis, se considera como una emergencia.
  Se solicita un electrocardiograma y muestras de laboratorio como estudios complementarios.
-El paciente va a preferir mantenerse sentado e inclinado hacia adelante.")))
+El paciente va a preferir mantenerse sentado e inclinado hacia adelante."
+            "Pericarditis / taponamiento cardiaco")))
 
 (comment
   (defrule some

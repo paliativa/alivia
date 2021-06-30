@@ -72,9 +72,10 @@
          "Re-Iniciar"]])
      (when (seq treatment)
        [:div
-        (for [{{:keys [medicine description]} :?treatment} treatment]
-          [:div {:key description}
-           [:h3 description]
+        (for [{{:keys [medicine description diagnostic]} :?treatment} treatment]
+          [:div {:key diagnostic}
+           [:h3 diagnostic]
+           [:p description]
            "Combinar:"
            (for [{:keys [options]} medicine]
              [:ol "Opciones"
