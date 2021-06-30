@@ -1,12 +1,17 @@
 /* some style */
 
 body {
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-family: "Roboto", sans-serif;
+}
+
+h1 {
+  font-family: "Roboto", sans-serif;
 }
 
 #app {
@@ -18,11 +23,7 @@ body {
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  background-color: blue;
-  justify-content: center;
-  margin-top: 45vh;
+  background-color: white;
 }
 
 .column {
@@ -34,4 +35,26 @@ body {
   display: flex;
   background-color: red;
   color: black;
+}
+
+.option {
+  padding: 1em 1em 1em 1em;
+}
+
+.option-text {
+  padding: 1em 1em 1em 1em;
+}
+
+button {
+  background-color: CornflowerBlue;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 4px 2px;
+  /* cursor: pointer; */
 }
