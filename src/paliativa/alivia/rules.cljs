@@ -1,4 +1,4 @@
-(ns fallas1.rules
+(ns paliativa.alivia.rules
   (:require [clara.rules
              :refer [insert!]
              :refer-macros [defsession defrule defquery]]))
@@ -11,7 +11,7 @@
 ;; Localización: Pecho, Cadera, Zona lumbar, Brazo, Zona posterior del cuello, Miembro superior, Cabeza
 (defrecord Location [location])
 ;; Irradiació: No irradia, Irradia hacia otra zona
-(defrecord Irradiation [])
+(defrecord Irradiation [irradiation])
 ;; Caracterización: Opresivo, Punzante, Quemante, Eléctrico, Indefinido
 (defrecord Characteristic [characteristic])
 ;; Duración: Agudo, Subagudo, Crónico
@@ -36,22 +36,24 @@
               "Alta" :high]
     :insertion ->Intensity}
 
+   {:question "¿Cual es la duración?"
+    :options ["Agudo. Corresponde al tiempo menor que las últimas 2 semanas." :acute
+              "Subagudo. De 2 semanas a 3 meses." :subacute
+              "Crónico. Más de 3 meses." :chronic]
+    :insertion ->Duration}
+
    {:question "¿Siempre es el mismo lugar?"
-    :options   ["Pecho" :chest
+    :options   ["Cabeza" :head
+                "Pecho" :chest
                 "Cadera" :hip
                 "Zona lumbar" :lumbar-area
                 "Brazo" :arm
                 "Zona posterior del cuello" :neck-back
                 "Miembro superior" :upper-limbs
                 "Cuadrante inferior derecho del abdomen" :right-inferior-adbomen-cuadrant
-                "Cuadrante superior derecho del abdomen" :right-superior-abdomen-cuadrant
-                "Cabeza" :head]
-    :insertion ->Location}
+                "Cuadrante superior derecho del abdomen" :right-superior-abdomen-cuadrant]
 
-   {:question "¿Siempre es el mismo lugar?"
-    :options   ["si, siempre es el mismo lugar." true
-                "no, el dolor se irradia hacia otras partes" false]
-    :insertion ->Irradiation}
+    :insertion ->Location}
 
    {:question "¿Que caracteristica tiene el dolor?"
     :options ["Opresivo. Dolor en una región. Se siente como que está apretado o hinchado." :opresive
@@ -60,18 +62,6 @@
               "Eléctrico. Se puede sentir el recorrido del dolor." :electric
               "Indefinido. El paciente no sabe explicar, o es difícil explicar porque es mezcla de varios por ejemplo" :undefined]
     :insertion ->Characteristic}
-
-   {:question "¿Cual es la duración?"
-    :options ["Agudo. Corresponde al tiempo menor que las últimas 2 semanas." :acute
-              "Subagudo. De 2 semanas a 3 meses." :subacute
-              "Crónico. Más de 3 meses." :chronic]
-    :insertion ->Duration}
-
-   {:question "¿Siempre duele igual o a veces duele más o menos? ."
-    :options ["constante" :constant
-              "intermitente" :intermittent
-              "reacciona a un estímulo" :triggered]
-    :insertion ->Behaviour}
 
    {:question "¿Que estimulo dispara el dolor?"
     :options ["Posicional. ¿La persona puede acostarse o no, por ejemplo?" :position
@@ -86,17 +76,30 @@
               "Infusión de cierta medicación endovenosa." :intrafusion-infusion
               "Decúbito" :decubitus]
     :insertion ->Stymulus}
-   {:question "¿Como reacciona al descanzo?"
-    :options ["El dolor cede" :stop
-              "El dolor no cede" :continue]
-    :insertion ->RestReaction}
+
    {:question "¿En que contexto?"
     :options ["Caída" :fall
               "Ningún evento traumático" :none
               "Cirugía no ambulatoria" :non-ambulatory-surgery
               "Biomecánica inadecuada en el ámbito extrahospitalario" :extra-hospital
               "Incorrecta movilización del paciente en el ámbito intrahospitalario" :inner-hospital]
-    :insertion ->Context}])
+    :insertion ->Context}
+
+   {:question "¿Siempre duele igual o a veces duele más o menos? ."
+    :options ["constante" :constant
+              "intermitente" :intermittent
+              "reacciona a un estímulo" :triggered]
+    :insertion ->Behaviour}
+
+   {:question "¿Siempre es el mismo lugar?"
+    :options   ["si, siempre es el mismo lugar." true
+                "no, el dolor se irradia hacia otras partes" false]
+    :insertion ->Irradiation}
+
+   {:question "¿Como reacciona al descanzo?"
+    :options ["El dolor cede" :stop
+              "El dolor no cede" :continue]
+    :insertion ->RestReaction}])
 
 (defrecord Treatment [medicine description diagnostic])
 
@@ -203,7 +206,7 @@ La inmovilización implica que el paciente se encuentra acostado con las baranda
 
 (defrule lumbalgia-1
   [Location (= location :lumbar-area)]
-  [(=  true)]
+  [Irradiation (= irradiation  true)]
   [Behaviour (= behaviour :intermittent)]
   [Duration (#{:subacute :chronic} duration)]
   [Intensity (= intensity :moderate)] =>
@@ -219,7 +222,7 @@ y estructuras involucradas.
 
 (defrule lumbalgia-2
   [Location   (= location :lumbar-area)]
-  [(=  true)]
+  [Irradiation (= irradiation  true)]
   [Behaviour (= behaviour :intermittent)]
   [Duration (#{:subacute :chronic} duration)]
   [Intensity (= intensity :high)]
@@ -425,4 +428,4 @@ El paciente va a preferir mantenerse sentado e inclinado hacia adelante."
   []
   [?treatment <- Treatment])
 
-(defsession session 'fallas1.rules)
+(defsession session 'paliativa.alivia.rules)

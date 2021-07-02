@@ -1,8 +1,8 @@
 ;; This test runner is intended to be run from the command line
-(ns fallas1.test-runner
+(ns paliativa.alivia.test-runner
   (:require
     ;; require all the namespaces that you want to test
-    [fallas1.nurse-test]
+    [paliativa.alivia.core-test]
     [figwheel.main.testing :refer [run-tests-async]]))
 
 (defn -main [& args]

@@ -1,8 +1,8 @@
-(ns fallas1.nurse-test
+(ns paliativa.alivia.core-test
   (:require
    [cljs.test :refer-macros [deftest is testing]]))
 
-;; [fallas1.nurse :refer [multiply]]
+;; [paliativa.alivia.core :refer [multiply]]
 ;; (deftest multiply-test
 ;;   (is (= (* 1 2) (multiply 1 2))))
 
