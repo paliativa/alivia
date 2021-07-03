@@ -72,6 +72,7 @@
                                                (nth rules/questions page))]
     [:div {:class-name "container"}
      [header]
+     [conclusion treatments (nil? question)]
      (when question
        [:div {:class-name "column"}
         [:h2 question]
@@ -82,8 +83,7 @@
            k])
         [:button
          {:on-click #(next-page nil)}
-         "Siguiente"]])
-     [conclusion treatments (nil? question)]]))
+         "Siguiente"]])]))
 
 (defn mount [el]
   (rdom/render [main] el))
