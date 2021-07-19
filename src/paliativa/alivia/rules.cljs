@@ -30,32 +30,46 @@
 (defrecord Context [context])
 
 (def questions
-  [{:question "¿Que intensidad siente de dolor?"
+  [{:question "Contexto:¿En que contexto se da el dolor?"
+    :options ["Caída" :fall
+              "Cirugía no ambulatoria" :non-ambulatory-surgery
+              "Ningún evento traumático" :none
+              "Otro" :other]
+    :insertion ->Context}
+
+   {:question "Localizacion:¿Siempre es el mismo lugar?"
+    :options   ["Brazo" :arm
+                "Cabeza" :head
+                "Cadera" :hip
+                "Pecho" :chest
+                "Zona lumbar" :lumbar-area
+                "Zona posterior del cuello" :neck-back
+                "Miembro superior" :upper-limbs
+                "Cuadrante inferior derecho del abdomen" :right-inferior-abdomen-cuadrant
+                "Cuadrante superior derecho del abdomen" :right-superior-abdomen-cuadrant
+                "Other" :other]
+    :insertion ->Location}
+
+   {:question "Estimulo: ¿Que estimulo dispara el dolor?"
+    :options ["Decúbito" :decubitus
+              "Palpacion profunda" :deep-palpation
+              "Otro" :other
+              "Ninguno" :none]
+    :insertion ->Stymulus}
+
+   {:question "Intensidad: ¿Que intensidad siente de dolor?"
     :options ["Leve" :low
               "Moderada" :moderate
               "Alta" :high]
     :insertion ->Intensity}
 
-   {:question "¿Cual es la duración?"
+   {:question "Duración: ¿Cual es la duración?"
     :options ["Agudo. Corresponde al tiempo menor que las últimas 2 semanas." :acute
               "Subagudo. De 2 semanas a 3 meses." :subacute
               "Crónico. Más de 3 meses." :chronic]
     :insertion ->Duration}
 
-   {:question "¿Siempre es el mismo lugar?"
-    :options   ["Cabeza" :head
-                "Pecho" :chest
-                "Cadera" :hip
-                "Zona lumbar" :lumbar-area
-                "Brazo" :arm
-                "Zona posterior del cuello" :neck-back
-                "Miembro superior" :upper-limbs
-                "Cuadrante inferior derecho del abdomen" :right-inferior-adbomen-cuadrant
-                "Cuadrante superior derecho del abdomen" :right-superior-abdomen-cuadrant]
-
-    :insertion ->Location}
-
-   {:question "¿Que caracteristica tiene el dolor?"
+   {:question "Caracteristica: ¿Que caracteristica tiene el dolor?"
     :options ["Opresivo. Dolor en una región. Se siente como que está apretado o hinchado." :opresive
               "Punzante. Dolor muy localizado, se puede indicar con un dedo." :stinging
               "Quemante. " :burning
@@ -63,42 +77,20 @@
               "Indefinido. El paciente no sabe explicar, o es difícil explicar porque es mezcla de varios por ejemplo" :undefined]
     :insertion ->Characteristic}
 
-   {:question "¿Que estimulo dispara el dolor?"
-    :options ["Posicional. ¿La persona puede acostarse o no, por ejemplo?" :position
-              "Movilización." :mobilization
-              "Al realizar fuerza." :strength
-              "Al aumentar la actividad física (correr, caminar, etc.)" :activity
-              "Expectoración (al toser)" :expectoration
-              "Reflejo nauseoso / vómito." :reflex
-              "Palpacion profunda" :deep-palpation
-              "Iluminación." :ligthing
-              "Sonidos fuertes" :loudness
-              "Infusión de cierta medicación endovenosa." :intrafusion-infusion
-              "Decúbito" :decubitus]
-    :insertion ->Stymulus}
-
-   {:question "¿En que contexto?"
-    :options ["Caída" :fall
-              "Ningún evento traumático" :none
-              "Cirugía no ambulatoria" :non-ambulatory-surgery
-              "Biomecánica inadecuada en el ámbito extrahospitalario" :extra-hospital
-              "Incorrecta movilización del paciente en el ámbito intrahospitalario" :inner-hospital]
-    :insertion ->Context}
-
-   {:question "¿Siempre duele igual o a veces duele más o menos? ."
-    :options ["constante" :constant
-              "intermitente" :intermittent
-              "reacciona a un estímulo" :triggered]
+   {:question "Comportamiento: ¿Siempre duele igual o a veces duele más o menos? ."
+    :options ["Constante" :constant
+              "Fluctuante" :intermittent
+              "Reacciona a un estímulo" :triggered]
     :insertion ->Behaviour}
 
-   {:question "¿Siempre es el mismo lugar?"
-    :options   ["si, siempre es el mismo lugar." true
-                "no, el dolor se irradia hacia otras partes" false]
+   {:question "Irradiacion: ¿El dolor se irradia a otra zona?"
+    :options   ["No irradia" false
+                "Irradia hacia otras zonas" true]
     :insertion ->Irradiation}
 
-   {:question "¿Como reacciona al descanzo?"
-    :options ["El dolor cede" :stop
-              "El dolor no cede" :continue]
+   {:question "Reaccion al reposo: ¿Como reacciona al descanzo?"
+    :options ["Cede" :stop
+              "No cede" :continue]
     :insertion ->RestReaction}])
 
 (defrecord Treatment [medicine description diagnostic])
@@ -112,35 +104,47 @@
    "Tramadol. 50 mg en 100 ml de solución fisiológica, vía endovenosa, durante 30 min a 1 h. Los rescates no deben superar los 200 mg de la droga en 24 hs."
    "Ketorolac. 10 mg o 20 mg vía oral o sublingual."])
 
+(defn un-fold [treatments]
+  (into {}
+        (for [[id {:keys [base] :as treatment}] treatments]
+          [id (cond-> treatment
+                base (assoc :base (treatments base)))])))
+
 (def treatments
-  {1 [{:options ["Paracetamol oral 1 g cada 8 horas"
+  (un-fold
+   {1 {:type :simple
+       :options ["Paracetamol oral 1 g cada 8 horas"
                  "Diclofenac oral 50 mg cada 8 horas"
                  "Diclofenac oral 75 mg cada 12 horas"
-                 "Ketorolac oral 10 mg o 20 mg también cada 8 horas"]}]
-   2 [{:options ["Diclofenac endovenoso 75 mg en 100 ml durante 1 hora cada 12 horas"
-                 "Ketorolac endovenoso 30 mg en 100 ml durante 1 hora cada 8 horas"]}]
-   3 [{:options ["Tramadol endovenoso 50 mg en 100 ml durante 1 hora cada 8 horas"]}]
-   4 [{:treatments [1]}
-      {:options ["Pregabalina oral 50 mg cada 8 horas"
-                 "Pregabalina oral 75 mg cada 12 horas"
-                 "Pregabalina oral 150 mg cada 24 horas"
-                 "Amitriptilina oral 100 mg o 200 mg por día"]}
-      {:options ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
-                 "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]}]
-   5 [{:treatments [2]}
-      {:options ["Pregabalina oral 50 mg cada 8 horas"
-                 "Pregabalina oral 75 mg cada 12 horas"
-                 "Pregabalina oral 150 mg cada 24 horas"
-                 "Amitriptilina oral 100 mg o 200 mg por día"]}
-      {:options ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
-                 "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]}]
-   6 [{:treatments [3]}
-      {:options ["Pregabalina oral 50 mg cada 8 horas"
-                 "Pregabalina oral 75 mg cada 12 horas"
-                 "Pregabalina oral 150 mg cada 24 horas"
-                 "Amitriptilina oral 100 mg o 200 mg por día"]}
-      {:options ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
-                 "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]}]})
+                 "Ketorolac oral 10 mg o 20 mg también cada 8 horas"]}
+    2 {:type :simple
+       :options ["Diclofenac endovenoso 75 mg en 100 ml durante 1 hora cada 12 horas"
+                 "Ketorolac endovenoso 30 mg en 100 ml durante 1 hora cada 8 horas"]}
+    3 {:type :simple
+       :options ["Tramadol endovenoso 50 mg en 100 ml durante 1 hora cada 8 horas"]}
+    4 {:type :compose
+       :base 1
+       :alternatives [["Pregabalina oral 50 mg cada 8 horas"
+                       "Pregabalina oral 75 mg cada 12 horas"
+                       "Pregabalina oral 150 mg cada 24 horas"
+                       "Amitriptilina oral 100 mg o 200 mg por día"]
+                      ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
+                       "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]]}
+    5 {:type :compose
+       :base 1
+       :alternatives [["Pregabalina oral 50 mg cada 8 horas"
+                       "Pregabalina oral 75 mg cada 12 horas"
+                       "Pregabalina oral 150 mg cada 24 horas"
+                       "Amitriptilina oral 100 mg o 200 mg por día"]
+                      ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
+                       "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]]}
+    6 {:type :compose
+       :alternatives [["Pregabalina oral 50 mg cada 8 horas"
+                       "Pregabalina oral 75 mg cada 12 horas"
+                       "Pregabalina oral 150 mg cada 24 horas"
+                       "Amitriptilina oral 100 mg o 200 mg por día"]
+                      ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
+                       "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]]}}))
 
 (defrule coronary-acute-sindrome
   [Location (= location :chest)]
@@ -149,13 +153,7 @@
   =>
   (insert! (->Treatment
             (treatments 3)
-            "Es un diagnóstico presuntivo, el cual contempla 3 patologías cardiacas
-con disminución de aporte de oxígeno al miocardio. Es un caso excepcional de emergencia,
-donde se requiere acción inmediata.
-Para establecer el diagnóstico definitivo se solicita un electrocardiograma
-y muestras de laboratorio para marcadores cardiacos.
-Durante la cateterización endovenosa se extrae sangre y
-luego se continúa administrando tratamiento analgésico por esta vía."
+            "Es un diagnóstico presuntivo, el cual contempla 3 patologías cardiacas con disminución de aporte de oxígeno al miocardio. Es un caso excepcional de emergencia, donde se requiere acción inmediata. Para establecer el diagnóstico definitivo se solicita un electrocardiograma y muestras de laboratorio para marcadores cardiacos. Durante la cateterización endovenosa se extrae sangre y luego se continúa administrando tratamiento analgésico por esta vía."
             "Síndrome coronario agudo")))
 
 (defrule humerus-fracture-1
@@ -165,11 +163,7 @@ luego se continúa administrando tratamiento analgésico por esta vía."
   =>
   (insert! (->Treatment
             (treatments 1)
-            "El húmero es un hueso largo que es parte de la articulación del hombro.
-Si la fractura se encuentra a niveles superiores,
-el compromiso vasculonervioso es mayor,
-por las relaciones anatómicas del húmero.
-Por eso se precisa realizar diagnóstico por imagen e inmovilización de la región afectada."
+            "El húmero es un hueso largo que es parte de la articulación del hombro. Si la fractura se encuentra a niveles superiores, el compromiso vasculonervioso es mayor, por las relaciones anatómicas del húmero. Por eso se precisa realizar diagnóstico por imagen e inmovilización de la región afectada."
             "Fractura de húmero 1")))
 
 (defrule humerus-fracture-2
@@ -179,13 +173,7 @@ Por eso se precisa realizar diagnóstico por imagen e inmovilización de la regi
   =>
   (insert! (->Treatment
             (treatments 2)
-            "El húmero es un hueso largo que es parte de la articulación del hombro.
-Si la fractura se encuentra a niveles superiores,
-el compromiso vasculonervioso es mayor,
-por las relaciones anatómicas del húmero.
-Por eso se precisa realizar diagnóstico
-por imagen e inmovilización de la región afectada.
-"
+            "El húmero es un hueso largo que es parte de la articulación del hombro. Si la fractura se encuentra a niveles superiores, el compromiso vasculonervioso es mayor, por las relaciones anatómicas del húmero. Por eso se precisa realizar diagnóstico por imagen e inmovilización de la región afectada."
             "Fractura de húmero 2")))
 
 (defrule femur-hip-fracture
@@ -195,13 +183,7 @@ por imagen e inmovilización de la región afectada.
   =>
   (insert! (->Treatment
             (treatments 2)
-            "El fémur es un hueso largo que forma parte de la articulación de la cadera.
-Esta región comprende la parte superior del hueso y con relaciones vasculonerviosas de gran calibre.
-Debido a las relaciones anatómicas es imprescindible la inmovilización de la región afectada y diagnóstico por imagen.
-La inmovilización implica que el paciente se encuentra acostado con las barandas elevadas por seguridad;
- debido a las necesidades de eliminación de excretas, se debe garantizar el confort del paciente en cuanto a la higiene en cama,
- así como prevenir úlceras por presión proporcionando rotaciones (cambio de posición).
-"
+            "El fémur es un hueso largo que forma parte de la articulación de la cadera. Esta región comprende la parte superior del hueso y con relaciones vasculonerviosas de gran calibre. Debido a las relaciones anatómicas es imprescindible la inmovilización de la región afectada y diagnóstico por imagen. La inmovilización implica que el paciente se encuentra acostado con las barandas elevadas por seguridad; debido a las necesidades de eliminación de excretas, se debe garantizar el confort del paciente en cuanto a la higiene en cama, así como prevenir úlceras por presión proporcionando rotaciones (cambio de posición)."
             "Fractura de fémur / cadera")))
 
 (defrule lumbalgia-1
@@ -212,12 +194,7 @@ La inmovilización implica que el paciente se encuentra acostado con las baranda
   [Intensity (= intensity :moderate)] =>
   (insert! (->Treatment
             (treatments 5)
-            "De acuerdo al grado de afectación el dolor irradiará parcial o totalmente uno o ambos miembros inferiores.
-No hay indicación de reposo estricto, sin embargo el paciente es quien establecerá los límites de su movilización
- según el umbral de tolerancia de dolor que maneje; es por eso que se deben garantizar medidas de confort y seguridad.
-Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación
-y estructuras involucradas.
-"
+            "De acuerdo al grado de afectación el dolor irradiará parcial o totalmente uno o ambos miembros inferiores. No hay indicación de reposo estricto, sin embargo el paciente es quien establecerá los límites de su movilización según el umbral de tolerancia de dolor que maneje; es por eso que se deben garantizar medidas de confort y seguridad. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Lumbalgia 1")))
 
 (defrule lumbalgia-2
@@ -229,11 +206,7 @@ y estructuras involucradas.
   =>
   (insert! (->Treatment
             (treatments 6)
-            "De acuerdo al grado de afectación el dolor irradiará parcial o totalmente uno o ambos miembros inferiores.
-No hay indicación de reposo estricto, sin embargo el paciente es quien establecerá los límites
- de su movilización según el umbral de tolerancia de dolor que maneje; es por eso que
-se deben garantizar medidas de confort y seguridad. Se realiza diagnóstico por imagen
-(resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "De acuerdo al grado de afectación el dolor irradiará parcial o totalmente uno o ambos miembros inferiores. No hay indicación de reposo estricto, sin embargo el paciente es quien establecerá los límites de su movilización según el umbral de tolerancia de dolor que maneje; es por eso que se deben garantizar medidas de confort y seguridad. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Lumbalgia 2")))
 
 (defrule cervicalgia-c1-c4
@@ -245,10 +218,7 @@ se deben garantizar medidas de confort y seguridad. Se realiza diagnóstico por 
   =>
   (insert! (->Treatment
             (treatments 5)
-            "Se debe garantizar la seguridad y confort del paciente: barandas superiores elevadas,
-cabecera a 30º, almohadas, posición de cuello y cabeza, rotación.
-Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía)
-para conocer la magnitud de afectación y estructuras involucradas."
+            "Se debe garantizar la seguridad y confort del paciente: barandas superiores elevadas, cabecera a 30º, almohadas, posición de cuello y cabeza, rotación. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Cervicalgia: niveles medulares cervicales superiores (C1 - C4)")))
 
 (defrule suspected-cerivical-fracture-1
@@ -260,10 +230,7 @@ para conocer la magnitud de afectación y estructuras involucradas."
   =>
   (insert! (->Treatment
             (treatments 1)
-            "Una alteración a este nivel puede comprometer toda la médula espinal,
- por lo que es fundamental y prioritaria la inmovilización del cuello (collar cervical).
- Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía)
-para conocer la magnitud de afectación y estructuras involucradas."
+            "Una alteración a este nivel puede comprometer toda la médula espinal, por lo que es fundamental y prioritaria la inmovilización del cuello (collar cervical). Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Sospecha de fractura de vértebra cervical 1")))
 
 (defrule suspected-cervical-fracture-2
@@ -275,9 +242,7 @@ para conocer la magnitud de afectación y estructuras involucradas."
   =>
   (insert! (->Treatment
             (treatments 2)
-            "Una alteración a este nivel puede comprometer toda la médula espinal,
-por lo que es fundamental y prioritaria la inmovilización del cuello (collar cervical).
-Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Una alteración a este nivel puede comprometer toda la médula espinal, por lo que es fundamental y prioritaria la inmovilización del cuello (collar cervical). Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Sospecha de fractura de vértebra cervical 2")))
 
 (defrule cervicalgia-c5-c8-1
@@ -288,9 +253,7 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
   =>
   (insert! (->Treatment
             (treatments 4)
-            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores,
- el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente.
- Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores, el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 1")))
 
 (defrule cervicalgia-c5-c8-2
@@ -301,10 +264,7 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
   =>
   (insert! (->Treatment
             (treatments 5)
-            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores,
-el paciente será más o menos dependiente de los cuidados de enfermería.
-Se garantiza el confort y seguridad del paciente.
-Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores, el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 2")))
 
 (defrule recent-cefalea-1
@@ -314,10 +274,7 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
   =>
   (insert! (->Treatment
             (treatments 1)
-            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia,
- que se asocia con otro síntoma motor en el momento de la valoración del dolor,
- o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen
-(resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
+            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia, que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
             "Cefalea de reciente aparición 1")))
 
 (defrule recent-cefalea-2
@@ -327,9 +284,7 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
   =>
   (insert! (->Treatment
             (treatments 4)
-            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia,
- que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después,
- condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
+            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia, que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
             "Cefalea de reciente aparición 2")))
 
 (defrule study-cefalea-1
@@ -339,9 +294,7 @@ Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para 
   =>
   (insert! (->Treatment
             (treatments 5)
-            "Este tipo de dolor crónico se define como incapacitante por lo que es necesario encontrar lo que lo provoque.
-Durante el tiempo que tome la realización de estudios diagnósticos por imágenes
-y laboratorio se establecerá un tratamiento para el dolor."
+            "Este tipo de dolor crónico se define como incapacitante por lo que es necesario encontrar lo que lo provoque. Durante el tiempo que tome la realización de estudios diagnósticos por imágenes y laboratorio se establecerá un tratamiento para el dolor."
             "Cefalea en estudio 1")))
 
 (defrule study-cefalea-2
@@ -351,10 +304,7 @@ y laboratorio se establecerá un tratamiento para el dolor."
   =>
   (insert! (->Treatment
             (treatments 6)
-            "Este tipo de dolor crónico se define como incapacitante por
-lo que es necesario encontrar lo que lo provoque.
-Durante el tiempo que tome la realización de estudios
- diagnósticos por imágenes y laboratorio se establecerá un tratamiento para el dolor."
+            "Este tipo de dolor crónico se define como incapacitante por lo que es necesario encontrar lo que lo provoque. Durante el tiempo que tome la realización de estudios diagnósticos por imágenes y laboratorio se establecerá un tratamiento para el dolor."
             "Cefalea en estudio 2")))
 
 (defrule postoperation-inmediate-admision
@@ -362,9 +312,7 @@ Durante el tiempo que tome la realización de estudios
   =>
   (insert! (->Treatment
             (treatments 2)
-            "Un procedimiento quirúrgico implica la pérdida de integridad de estructuras anatómicas,
- tales como piel, órganos y/o músculos. En cualquier paciente que transita un postoperatorio
- inmediato se asume la presencia de dolor y la necesidad de aplicar tratamiento analgesico."
+            "Un procedimiento quirúrgico implica la pérdida de integridad de estructuras anatómicas, tales como piel, órganos y/o músculos. En cualquier paciente que transita un postoperatorio inmediato se asume la presencia de dolor y la necesidad de aplicar tratamiento analgesico."
             "Postoperatorios inmediatos con internación")))
 
 (defrule apendicitis
@@ -373,9 +321,7 @@ Durante el tiempo que tome la realización de estudios
   =>
   (insert! (->Treatment
             (treatments 3)
-            "El dolor es localizado y aumenta a la palpación profunda del punto doloroso de McBurney,
- lo cual orienta a la resolución quirúrgica y se solicitan estudios complementarios de rutina
- para darle solidez a la terapéutica. Luego de esta valoración (palpación) comienza el tratamiento para el dolor."
+            "El dolor es localizado y aumenta a la palpación profunda del punto doloroso de McBurney, lo cual orienta a la resolución quirúrgica y se solicitan estudios complementarios de rutina para darle solidez a la terapéutica. Luego de esta valoración (palpación) comienza el tratamiento para el dolor."
             "Apendicitis")))
 
 (defrule colecistitis
@@ -384,10 +330,7 @@ Durante el tiempo que tome la realización de estudios
   =>
   (insert! (->Treatment
             (treatments 3)
-            "El dolor es localizado y aumenta a la palpación profunda en el punto doloroso cístico.
- Debido a las complejas relaciones anatómicas en esa región esta palpación no basta para dar diagnóstico
- por lo que se requieren estudios complementarios de laboratorio y diagnóstico por imágenes (ecografía).
-Durante la realización de estudios comienza el tratamiento analgesico."
+            "El dolor es localizado y aumenta a la palpación profunda en el punto doloroso cístico. Debido a las complejas relaciones anatómicas en esa región esta palpación no basta para dar diagnóstico por lo que se requieren estudios complementarios de laboratorio y diagnóstico por imágenes (ecografía). Durante la realización de estudios comienza el tratamiento analgesico."
             "Colecistitis")))
 
 (defrule pericarditis
@@ -398,19 +341,14 @@ Durante la realización de estudios comienza el tratamiento analgesico."
   =>
   (insert! (->Treatment
             (treatments 3)
-            "Debido a la fisiopatología, las manifestaciones clínicas y la región anatómica afectada,
- puede confundirse con otras patologías cardiacas de emergencia (síndrome coronario agudo / infarto agudo del miocardio)
- que hablan de la disminución del oxígeno al miocardio, pero que la resolución es muy distinta.
- El taponamiento cardiaco, que es posterior a la pericarditis, se considera como una emergencia.
- Se solicita un electrocardiograma y muestras de laboratorio como estudios complementarios.
-El paciente va a preferir mantenerse sentado e inclinado hacia adelante."
+            "Debido a la fisiopatología, las manifestaciones clínicas y la región anatómica afectada, puede confundirse con otras patologías cardiacas de emergencia (síndrome coronario agudo / infarto agudo del miocardio) que hablan de la disminución del oxígeno al miocardio, pero que la resolución es muy distinta. El taponamiento cardiaco, que es posterior a la pericarditis, se considera como una emergencia. Se solicita un electrocardiograma y muestras de laboratorio como estudios complementarios. El paciente va a preferir mantenerse sentado e inclinado hacia adelante."
             "Pericarditis / taponamiento cardiaco")))
 
 (comment
   (defrule some
     [Intensity (= intensity nil)]
     [Location (= location nil)]
-    [(= propagation nil)]
+    [Irradiation (= propagation nil)]
     [Characteristic (= characteristic nil)]
     [Duration (= duration nil)]
     [Behaviour (= behaviour nil)]

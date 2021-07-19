@@ -22,14 +22,18 @@
         treatments (query session rules/check-treatment)]
     (swap! app-state
            assoc
-           :page    (inc page)
+           :page   (if (seq treatments)
+                     (count rules/questions)
+                     (inc page))
            :session session
            :treatments treatments)))
 
 (defn return-home []
   (swap! app-state
          #(-> %
-              (assoc :page 0))))
+              (assoc :page 0
+                     :session rules/session
+                     :treatments nil))))
 
 (defn select-option [mapper v]
   (fn [_]
@@ -45,26 +49,40 @@
     [:img {:src "img/pills.png"
            :width "35em"}]]])
 
+(defn treatment-options [options]
+  [:ol
+   (for [option options]
+     [:li {:key option}
+      option])])
+
+(defn base-treatment [{:keys [options]}]
+  [:div [:p "Una de las siguientes opciones"]
+   (treatment-options options)])
+
+(defn compose-treatment [{:keys [alternatives base]}]
+  (into [:div [:p "Administrar"]
+         (base-treatment base)]
+        (for [alternative alternatives]
+          [:div [:p "y una de las siguientes opciones"]
+           (treatment-options alternative)])))
+
 (defn conclusion [treatments done?]
   (cond
     (seq treatments)
-    [:div
+    [:div.column
      (for [{{:keys [medicine description diagnostic]} :?treatment} treatments]
        [:details {:key diagnostic}
         [:summary diagnostic]
         [:div
          [:p description]
-         [:p "Combinar:"
-          (for [{:keys [options]} medicine]
-            [:ol "Opciones"
-             (for [option options]
-               [:li option])])]]])]
+         (let [{:keys [type]} medicine]
+           (case type
+             :simple  (base-treatment medicine)
+             :compose (compose-treatment medicine)))]])]
 
     done?
-    [:div {:class-name "column"}
-     "No se pudo encontrar un solucion adecuada por favor acuda al médico."
-     [:button {:on-click return-home}
-      "Re-Iniciar"]]))
+    [:div.column
+     "No se pudo encontrar un solucion adecuada por favor acuda al médico."]))
 
 (defn main []
   (let [{:keys [page treatments]} @app-state
@@ -81,9 +99,12 @@
                     :key k
                     :on-click #(next-page (insertion v))}
            k])
-        [:button
-         {:on-click #(next-page nil)}
-         "Siguiente"]])]))
+        #_[:button
+           {:on-click #(next-page nil)}
+           "Siguiente"]])
+     (when (not question)
+       [:button {:on-click return-home}
+        "Re-Iniciar"])]))
 
 (defn mount [el]
   (rdom/render [main] el))
