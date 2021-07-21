@@ -159,7 +159,7 @@
 (defrule humerus-fracture-1
   [Location (= location :arm)]
   [Characteristic (= characteristic :undefined)]
-  [RestReaction (= rest-reaction :moderate)]
+  [Intensity (= intensity :moderate)]
   =>
   (insert! (->Treatment
             (treatments 1)
@@ -169,7 +169,7 @@
 (defrule humerus-fracture-2
   [Location (= location :arm)]
   [Characteristic (= characteristic :undefined)]
-  [RestReaction (= rest-reaction :high)]
+  [Intensity (= intensity :high)]
   =>
   (insert! (->Treatment
             (treatments 2)
@@ -179,7 +179,7 @@
 (defrule femur-hip-fracture
   [Location (= location :hip)]
   [Context (= context :fall)]
-  [RestReaction (= rest-reaction :high)]
+  [Intensity (= intensity :high)]
   =>
   (insert! (->Treatment
             (treatments 2)
@@ -221,6 +221,28 @@
             "Se debe garantizar la seguridad y confort del paciente: barandas superiores elevadas, cabecera a 30º, almohadas, posición de cuello y cabeza, rotación. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Cervicalgia: niveles medulares cervicales superiores (C1 - C4)")))
 
+(defrule cervicalgia-c5-c8-1
+  [Intensity (= intensity :low)]
+  [Location (= location :upper-limbs)]
+  [Duration (#{:subacute :chronic} duration)]
+  [Context (= context :none)]
+  =>
+  (insert! (->Treatment
+            (treatments 4)
+            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores, el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 1")))
+
+(defrule cervicalgia-c5-c8-2
+  [Intensity (= intensity :moderate)]
+  [Location (= location :upper-limbs)]
+  [Duration (#{:subacute :chronic} duration)]
+  [Context (= context :none)]
+  =>
+  (insert! (->Treatment
+            (treatments 5)
+            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores, el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
+            "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 2")))
+
 (defrule suspected-cerivical-fracture-1
   "Sospecha de fractura de vértebra cervical 1"
   [Intensity (= intensity :low)]
@@ -244,28 +266,6 @@
             (treatments 2)
             "Una alteración a este nivel puede comprometer toda la médula espinal, por lo que es fundamental y prioritaria la inmovilización del cuello (collar cervical). Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
             "Sospecha de fractura de vértebra cervical 2")))
-
-(defrule cervicalgia-c5-c8-1
-  [Intensity (= intensity :low)]
-  [Location (= location :upper-limbs)]
-  [Duration (#{:subacute :chronic} duration)]
-  [Context (= context :none)]
-  =>
-  (insert! (->Treatment
-            (treatments 4)
-            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores, el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
-            "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 1")))
-
-(defrule cervicalgia-c5-c8-2
-  [Intensity (= intensity :moderate)]
-  [Location (= location :upper-limbs)]
-  [Duration (#{:subacute :chronic} duration)]
-  [Context (= context :none)]
-  =>
-  (insert! (->Treatment
-            (treatments 5)
-            "Dependiendo de la magnitud del compromiso motor y si afecta a uno o ambos miembros superiores, el paciente será más o menos dependiente de los cuidados de enfermería. Se garantiza el confort y seguridad del paciente. Se realiza diagnóstico por imagen (resonancia magnética y/o tomografía) para conocer la magnitud de afectación y estructuras involucradas."
-            "Cervicalgia: niveles medulares cervicales inferiores (C5 - C8) 2")))
 
 (defrule recent-cefalea-1
   [Intensity (= intensity :low)]
@@ -358,8 +358,7 @@
     =>
     (insert! (->Treatment
               (treatments 1)
-              "
-"))))
+              ""))))
 
 (defquery check-treatment
   "Query for treatment"

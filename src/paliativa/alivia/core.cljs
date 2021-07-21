@@ -71,8 +71,9 @@
     (seq treatments)
     [:div.column
      (for [{{:keys [medicine description diagnostic]} :?treatment} treatments]
-       [:details {:key diagnostic}
-        [:summary diagnostic]
+       [:details {:open true
+                  :key diagnostic}
+        [:summary  diagnostic]
         [:div
          [:p description]
          (let [{:keys [type]} medicine]
