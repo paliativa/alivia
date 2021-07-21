@@ -30,14 +30,14 @@
 (defrecord Context [context])
 
 (def questions
-  [{:question "Contexto:¿En que contexto se da el dolor?"
+  [{:question "Contexto"
     :options ["Caída" :fall
               "Cirugía no ambulatoria" :non-ambulatory-surgery
-              "Ningún evento traumático" :none
-              "Otro" :other]
+              "Otro" :other
+              "Ningún evento traumático" :none]
     :insertion ->Context}
 
-   {:question "Localizacion:¿Siempre es el mismo lugar?"
+   {:question "Localizacion"
     :options   ["Brazo" :arm
                 "Cabeza" :head
                 "Cadera" :hip
@@ -47,48 +47,48 @@
                 "Miembro superior" :upper-limbs
                 "Cuadrante inferior derecho del abdomen" :right-inferior-abdomen-cuadrant
                 "Cuadrante superior derecho del abdomen" :right-superior-abdomen-cuadrant
-                "Other" :other]
+                "Otro" :other]
     :insertion ->Location}
 
-   {:question "Estimulo: ¿Que estimulo dispara el dolor?"
+   {:question "Estimulo"
     :options ["Decúbito" :decubitus
               "Palpacion profunda" :deep-palpation
               "Otro" :other
               "Ninguno" :none]
     :insertion ->Stymulus}
 
-   {:question "Intensidad: ¿Que intensidad siente de dolor?"
+   {:question "Intensidad"
     :options ["Leve" :low
               "Moderada" :moderate
               "Alta" :high]
     :insertion ->Intensity}
 
-   {:question "Duración: ¿Cual es la duración?"
-    :options ["Agudo. Corresponde al tiempo menor que las últimas 2 semanas." :acute
-              "Subagudo. De 2 semanas a 3 meses." :subacute
+   {:question "Duración"
+    :options ["Agudo. Últimas 2 semanas o menos." :acute
+              "Subagudo. Entre 2 semanas y 3 meses." :subacute
               "Crónico. Más de 3 meses." :chronic]
     :insertion ->Duration}
 
-   {:question "Caracteristica: ¿Que caracteristica tiene el dolor?"
-    :options ["Opresivo. Dolor en una región. Se siente como que está apretado o hinchado." :opresive
-              "Punzante. Dolor muy localizado, se puede indicar con un dedo." :stinging
-              "Quemante. " :burning
-              "Eléctrico. Se puede sentir el recorrido del dolor." :electric
-              "Indefinido. El paciente no sabe explicar, o es difícil explicar porque es mezcla de varios por ejemplo" :undefined]
+   {:question "Caracteristica"
+    :options ["Opresivo. Dolor con sensación de aplastamiento o presión." :opresive
+              "Punzante. Dolor localizado, se puede indicar con un dedo." :stinging
+              "Quemante. Dolor en una región que se explicita como ardor." :burning
+              "Eléctrico. Se puede sentir el recorrido del dolor, que es semejante a una descarga eléctrica." :electric
+              "Indefinido. El paciente, aun siendo lúcido y capaz de comunicarse, no puede explicar cómo se siente el dolor o le cuesta explicarlo." :undefined]
     :insertion ->Characteristic}
 
-   {:question "Comportamiento: ¿Siempre duele igual o a veces duele más o menos? ."
+   {:question "Comportamiento:"
     :options ["Constante" :constant
               "Fluctuante" :intermittent
               "Reacciona a un estímulo" :triggered]
     :insertion ->Behaviour}
 
-   {:question "Irradiacion: ¿El dolor se irradia a otra zona?"
+   {:question "Irradiacion:"
     :options   ["No irradia" false
-                "Irradia hacia otras zonas" true]
+                "Irradia hacia otra zona" true]
     :insertion ->Irradiation}
 
-   {:question "Reaccion al reposo: ¿Como reacciona al descanzo?"
+   {:question "Reacción ante reposo"
     :options ["Cede" :stop
               "No cede" :continue]
     :insertion ->RestReaction}])
