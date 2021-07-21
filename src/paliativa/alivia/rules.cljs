@@ -30,14 +30,14 @@
 (defrecord Context [context])
 
 (def questions
-  [{:question "Contexto"
+  [{:question "Contexto (¿Hubo algo que marcó el inicio del dolor?)"
     :options ["Caída" :fall
               "Cirugía no ambulatoria" :non-ambulatory-surgery
               "Otro" :other
               "Ningún evento traumático" :none]
     :insertion ->Context}
 
-   {:question "Localizacion"
+   {:question "Localizacion (¿Dónde duele?)"
     :options   ["Brazo" :arm
                 "Cabeza" :head
                 "Cadera" :hip
@@ -50,26 +50,26 @@
                 "Otro" :other]
     :insertion ->Location}
 
-   {:question "Estimulo"
+   {:question "Estimulo (¿Qué provoca la sensación de dolor o lo hace más intenso?)"
     :options ["Decúbito" :decubitus
               "Palpacion profunda" :deep-palpation
               "Otro" :other
               "Ninguno" :none]
     :insertion ->Stymulus}
 
-   {:question "Intensidad"
+   {:question "Intensidad (¿Qué tan fuerte duele?)"
     :options ["Leve" :low
               "Moderada" :moderate
               "Alta" :high]
     :insertion ->Intensity}
 
-   {:question "Duración"
+   {:question "Duración (¿Desde cuándo duele?)"
     :options ["Agudo. Últimas 2 semanas o menos." :acute
               "Subagudo. Entre 2 semanas y 3 meses." :subacute
               "Crónico. Más de 3 meses." :chronic]
     :insertion ->Duration}
 
-   {:question "Caracteristica"
+   {:question "Caracteristica (¿Cómo duele?)"
     :options ["Opresivo. Dolor con sensación de aplastamiento o presión." :opresive
               "Punzante. Dolor localizado, se puede indicar con un dedo." :stinging
               "Quemante. Dolor en una región que se explicita como ardor." :burning
@@ -77,18 +77,18 @@
               "Indefinido. El paciente, aun siendo lúcido y capaz de comunicarse, no puede explicar cómo se siente el dolor o le cuesta explicarlo." :undefined]
     :insertion ->Characteristic}
 
-   {:question "Comportamiento:"
+   {:question "Comportamiento (¿Siempre duele igual o a veces duele más o menos? ¿Hay algo que hace que el dolor se sienta más?)"
     :options ["Constante" :constant
               "Fluctuante" :intermittent
               "Reacciona a un estímulo" :triggered]
     :insertion ->Behaviour}
 
-   {:question "Irradiacion:"
+   {:question "Irradiacion (¿Siempre duele en el mismo lugar o se desplaza hacia otra parte del cuerpo?)"
     :options   ["No irradia" false
                 "Irradia hacia otra zona" true]
     :insertion ->Irradiation}
 
-   {:question "Reacción ante reposo"
+   {:question "Reacción ante reposo (¿El dolor cede con el reposo?)"
     :options ["Cede" :stop
               "No cede" :continue]
     :insertion ->RestReaction}])
@@ -100,8 +100,8 @@
             #{"Tramadol" "morfina" "fentanilo" "codeína"}])
 
 (def rescue
-  ["Morfina. 2 o 3 mg de morfina - es decir 2 o 3 ml de la solución preparada en la jeringa - administrado en bolo (tiempo de administración menor a 5 minutos) endovenoso."
-   "Tramadol. 50 mg en 100 ml de solución fisiológica, vía endovenosa, durante 30 min a 1 h. Los rescates no deben superar los 200 mg de la droga en 24 hs."
+  ["Morfina. 2 o 3 mg de morfina - es decir 2 o 3 ml de la solución preparada en la jeringa - administrado en bolo (tiempo de administración menor a 5 minutos) endovenoso. Los rescates tienen que estar distanciados por lo menos 1 hora."
+   "Tramadol. 50 mg en 100 ml de solución fisiológica, vía endovenosa, durante 30 min a 1 h. Los rescates no deben superar los 200 mg de la droga en 24 hs. Además, tienen que estar distanciados por lo menos 2 horas."
    "Ketorolac. 10 mg o 20 mg vía oral o sublingual."])
 
 (defn un-fold [treatments]
@@ -116,7 +116,7 @@
        :options ["Paracetamol oral 1 g cada 8 horas"
                  "Diclofenac oral 50 mg cada 8 horas"
                  "Diclofenac oral 75 mg cada 12 horas"
-                 "Ketorolac oral 10 mg o 20 mg también cada 8 horas"]}
+                 "Ketorolac oral 10 mg o 20 mg cada 8 horas"]}
     2 {:type :simple
        :options ["Diclofenac endovenoso 75 mg en 100 ml durante 1 hora cada 12 horas"
                  "Ketorolac endovenoso 30 mg en 100 ml durante 1 hora cada 8 horas"]}
@@ -274,7 +274,7 @@
   =>
   (insert! (->Treatment
             (treatments 1)
-            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia, que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
+            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia, que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT - accidente isquémico transitorio, ACV - accidente cerebrovascular)."
             "Cefalea de reciente aparición 1")))
 
 (defrule recent-cefalea-2
@@ -284,7 +284,7 @@
   =>
   (insert! (->Treatment
             (treatments 4)
-            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia, que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT, ACV)."
+            "La aparición en el tránsito de una internación o que sea el motivo de una consulta en guardia, que se asocia con otro síntoma motor en el momento de la valoración del dolor, o que este mismo aparezca después, condiciona la necesidad de realizar diagnóstico por imagen (resonancia magnética y/o tomografía) para descartar un evento isquémico cerebral agudo (AIT - accidente isquémico transitorio, ACV - accidente cerebrovascular)."
             "Cefalea de reciente aparición 2")))
 
 (defrule study-cefalea-1
