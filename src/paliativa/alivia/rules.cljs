@@ -131,7 +131,7 @@
                       ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
                        "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]]}
     5 {:type :compose
-       :base 1
+       :base 2
        :alternatives [["Pregabalina oral 50 mg cada 8 horas"
                        "Pregabalina oral 75 mg cada 12 horas"
                        "Pregabalina oral 150 mg cada 24 horas"
@@ -139,6 +139,7 @@
                       ["Diazepam oral de 5 mg a 10 mg cada 24 horas"
                        "Clonazepam oral o sublingual de 0,5 mg a 2 mg cada 24 horas"]]}
     6 {:type :compose
+       :base 3
        :alternatives [["Pregabalina oral 50 mg cada 8 horas"
                        "Pregabalina oral 75 mg cada 12 horas"
                        "Pregabalina oral 150 mg cada 24 horas"
